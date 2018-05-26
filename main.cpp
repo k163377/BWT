@@ -29,21 +29,38 @@ void DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &v){
         );
 }
 
+//BWT系列を作成
+std::string MakeBWT(const std::string str, const std::vector<std::tuple<int, std::string>> &v){
+    using namespace std;
+    string s = "";
+    int i;
+    for(auto t : v){
+        i = get<0>(t);
+        if(i == 0) s+= str[str.length()-1];
+        else s+=str[i-1];
+    }
+    cout << s << endl;
+    return s;
+}
+
 int main() {
     using namespace std;
 
     string str = "internationalization"; //入力
+    //string str = "cacao";
     vector<tuple<int, string>> v = MakeSuffix(str);
-    for(auto &t : v){
+    /*for(auto &t : v){
         cout << get<1>(t) << '\n';
     }
-    cout << "\nend of MakeSuffix\n" << endl;
+    cout << "\nend of MakeSuffix\n" << endl;*/
 
     DictionaryOrderSort(v);
-    for(auto &t : v){
+    /*for(auto &t : v){
         cout << get<0>(t) << "\t:" << get<1>(t) << '\n';
     }
-    cout << endl;
+    cout << endl;*/
+
+    MakeBWT(str, v);
 
     return 0;
 }
