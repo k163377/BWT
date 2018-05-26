@@ -30,17 +30,21 @@ void DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &v){
 }
 
 //BWT系列を作成
-std::string MakeBWT(const std::string str, const std::vector<std::tuple<int, std::string>> &v){
+std::tuple<int, std::string> MakeBWT(const std::string str, const std::vector<std::tuple<int, std::string>> &v){
     using namespace std;
     string s = "";
-    int i;
-    for(auto t : v){
-        i = get<0>(t);
-        if(i == 0) s+= str[str.length()-1];
-        else s+=str[i-1];
+
+    int OriginalPoint;
+    for(int i = 0; i < v.size(); i++){
+        if(get<0>(v[i]) == 0){
+            s+= str[str.length()-1];
+            OriginalPoint = i;
+        }
+        else s+=str[get<0>(v[i])-1];
     }
-    cout << s << endl;
-    return s;
+    cout << OriginalPoint << s << endl;
+
+    return make_tuple(OriginalPoint, s);
 }
 
 int main() {
