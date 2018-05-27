@@ -10,7 +10,9 @@
 #include <concrt.h>
 
 //単語を入れたらSuffixのベクターを返す
-std::vector<std::tuple<int, std::string>> MakeSuffix(const std::string &str){
+std::vector<std::tuple<int, std::string>>
+MakeSuffix(const std::string &str
+){
     using namespace std;
 
     vector<tuple<int, string>> v;
@@ -23,7 +25,9 @@ std::vector<std::tuple<int, std::string>> MakeSuffix(const std::string &str){
 }
 
 //Suffixをソート
-void DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &Suffix){
+void
+DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &Suffix
+){
     using namespace std;
     sort(execution::par_unseq,
          Suffix.begin(), Suffix.end(),
@@ -34,7 +38,9 @@ void DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &Suffix){
 
 //BWT系列を作成
 std::tuple<int, std::string>
-MakeBWT(const std::string OriginalString, const std::vector<std::tuple<int, std::string>> &SuffixArray){
+MakeBWT(const std::string OriginalString,
+        const std::vector<std::tuple<int, std::string>> &SuffixArray
+){
     using namespace std;
 
     string s(OriginalString.length(), '0'); //容量固定のstringを配列っぽく使用
@@ -50,27 +56,32 @@ MakeBWT(const std::string OriginalString, const std::vector<std::tuple<int, std:
     return make_tuple(OriginalPoint, s);
 }
 
-std::string ReconstructionFromBWT(const std::tuple<int, std::string> &BWT){
+std::string
+ReconstructionFromBWT(const std::tuple<int, std::string> &BWT,
+                      const unsigned int limit = 0 // 何文字目まで再生するか
+){
     using namespace std;
+    //タグ付け
     vector<tuple<char, int>> v;
     string temp = get<1>(BWT);
     for(size_t i = 0; i < temp.length(); i++){
         v.emplace_back(make_tuple(temp[i], i));
-        //cout << get<0>(v[i]) << endl;
     }
     //安定ソートで並べ替え、法則を得る なぜか並列処理が有効化できなかった
     stable_sort(v.begin(), v.end());
 
+    //リミットまで復元
+    const int lim = max((int)temp.length()-(int)limit-1, 0);
     int val = get<0>(BWT);
     int j;
-    for(int i = (int)temp.length() -1; i >= 0; i--){
+    for(int i = (int)temp.length() -1; i >= lim; i--){
         temp[i] = get<1>(BWT)[val];
         j = 0;
         while(val != get<1>(v[j])) j++;
         val = j;
     }
 
-    return temp;
+    return temp.substr(max(lim, 0), temp.length());
 }
 
 int main() {
@@ -94,7 +105,7 @@ int main() {
     cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
 
     cout << "\nDecode" << endl;
-    cout << ReconstructionFromBWT(BWT) << endl; //デコード
+    cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
     cout << flush << endl;
 
     concurrency::wait(1000);
