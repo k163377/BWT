@@ -37,8 +37,6 @@ std::tuple<int, std::string>
 MakeBWT(const std::string OriginalString, const std::vector<std::tuple<int, std::string>> &SuffixArray){
     using namespace std;
 
-    for(auto t : SuffixArray){ cout << get<0>(t) << get<1>(t) << endl; }
-
     string s(OriginalString.length(), '0'); //容量固定のstringを配列っぽく使用
     int OriginalPoint;
     concurrency::parallel_for(size_t(0), OriginalString.length(), [&](size_t i){
@@ -49,29 +47,6 @@ MakeBWT(const std::string OriginalString, const std::vector<std::tuple<int, std:
         else s[i] = OriginalString[get<0>(SuffixArray[i])-1];
     });
 
-    return make_tuple(OriginalPoint, s);
-}
-
-std::tuple<int, std::string>
-MakeBWT_(const std::string OriginalString){
-    using namespace std;
-    vector<tuple<int, string>> v;
-
-    string s;
-    for(int i = 0; i < OriginalString.length(); i++){
-        s = OriginalString.substr(i, OriginalString.length()) + OriginalString.substr(0, i);
-        v.emplace_back(make_tuple(i, s));
-    }
-
-    DictionaryOrderSort(v);
-    int OriginalPoint;
-    cout << "---MakeBWT_---" << endl;
-    for(int i = 0; i < s.length(); i++){
-        s[i] = get<1>(v[i])[s.length()-1];
-        if(get<0>(v[i]) == 0) OriginalPoint = i;
-
-        cout << get<1>(v[i]) << endl;
-    }
     return make_tuple(OriginalPoint, s);
 }
 
@@ -102,17 +77,25 @@ int main() {
     using namespace std;
 
     string str = "internationalization$"; //入力
-    //string str = "cacao";
-    //string str = "abracadabra";
     vector<tuple<int, string>> v = MakeSuffix(str); //Suffix作成
-    DictionaryOrderSort(v); //ソート
-    tuple<int, string> BWT = MakeBWT(str, v); //BWT取得
-    //tuple<int, string> BWT = MakeBWT_(str); //BWT取得
-    //MakeBWT_(str); //BWT取得
+    cout << "Suffix" << endl;
+    for(auto t : v){
+        cout << get<0>(t) << "\t:" << get<1>(t) << endl;
+    }
 
-    //cout << get<0>(BWT) << get<1>(BWT) << endl;
-    cout << ReconstructionFromBWT(BWT) << endl;
-    //cout << ReconstructionFromBWT(make_tuple(4,"NNZTNTTLAOROIIIENAAI"));
+    DictionaryOrderSort(v); //ソート
+    cout << "\nSuffix Array" << endl;
+    for(auto t : v){
+        cout << get<0>(t) << "\t:" << get<1>(t) << endl;
+    }
+
+    tuple<int, string> BWT = MakeBWT(str, v); //BWT取得
+    cout << "\nGet BWT" << endl;
+    cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
+
+    cout << "\nDecode" << endl;
+    cout << ReconstructionFromBWT(BWT) << endl; //デコード
+    cout << flush << endl;
 
     concurrency::wait(1000);
     return 0;
