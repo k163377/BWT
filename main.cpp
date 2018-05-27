@@ -67,8 +67,8 @@ ReconstructionFromBWT(const std::tuple<int, std::string> &BWT,
     for(size_t i = 0; i < temp.length(); i++){
         v.emplace_back(make_tuple(temp[i], i));
     }
-    //安定ソートで並べ替え、法則を得る なぜか並列処理が有効化できなかった
-    stable_sort(v.begin(), v.end());
+    //安定ソートで並べ替え、法則を得る
+    stable_sort(execution::par_unseq, v.begin(), v.end());
 
     //リミットまで復元
     const int lim = max((int)temp.length()-(int)limit-1, 0);
