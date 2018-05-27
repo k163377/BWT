@@ -7,8 +7,6 @@
 #include <string>
 #include <tuple>
 
-#include <concrt.h>
-
 //単語を入れたらSuffixのベクターを返す
 std::vector<std::tuple<int, std::string>>
 MakeSuffix(const std::string &str
@@ -107,8 +105,6 @@ int main() {
     cout << "\nDecode" << endl;
     //cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
     cout << ReconstructionFromBWT(BWT) << endl; //デコード
-    cout << flush << endl;
 
-    concurrency::wait(1000);
     return 0;
 }
