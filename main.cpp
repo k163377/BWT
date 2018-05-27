@@ -58,7 +58,7 @@ MakeBWT(const std::string OriginalString,
 
 std::string
 ReconstructionFromBWT(const std::tuple<int, std::string> &BWT,
-                      const unsigned int limit = 0 // 何文字目まで再生するか
+                      const unsigned int limit = INT_MAX // 何文字目まで再生するかの指定
 ){
     using namespace std;
     //タグ付け
@@ -105,7 +105,8 @@ int main() {
     cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
 
     cout << "\nDecode" << endl;
-    cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
+    //cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
+    cout << ReconstructionFromBWT(BWT) << endl; //デコード
     cout << flush << endl;
 
     concurrency::wait(1000);
