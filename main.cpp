@@ -15,9 +15,11 @@ MakeSuffix(const std::string &str
 
     vector<tuple<int, string>> v;
     v.reserve(str.length());
+    size_t lim = (str.length() / thread::hardware_concurrency()) + 1; //スレッド並列数計算
     //parallel_forで並列処理
-    concurrency::parallel_for(size_t(0), str.length(), [&str, &v](size_t i){
-        v.emplace_back(i, str.substr(i, str.length())); //emplace_backの中に書いた要素でtuple<int, std::string>のデフォルトコンストラクタが呼ばれてるそうな
+    concurrency::parallel_for(size_t(0), lim, [&](size_t i){
+        size_t t = min(str.length(), lim * (i + 1));
+        for(size_t j = lim * i; j < t; j++) v.emplace_back(j, str.substr(j, str.length())); //emplace_backの中に書いた要素でtuple<int, std::string>のデフォルトコンストラクタが呼ばれてるそうな
     });
 
     return v;
@@ -87,26 +89,26 @@ int main() {
     using namespace std;
 
     //string str = "internationalization$"; //入力
-    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaagragsdhtgvhbdvsfgawdawddfthffdsrrtjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcxnbdgrda$";
+    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaagragsdhtgvhbdvsfgawdawddfthffdsrrttjhilkjpo;dftjuklidfthgsdfasarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
     vector<tuple<int, string>> v = MakeSuffix(str); //Suffix作成
     cout << "Suffix\n";
     for(auto t : v){
         cout << get<0>(t) << "\t:" << get<1>(t) << '\n';
     }
 
-    /*DictionaryOrderSort(v); //ソート
+    DictionaryOrderSort(v); //ソート
     cout << "\nSuffix Array\n";
     for(auto t : v){
         cout << get<0>(t) << "\t:" << get<1>(t) << '\n';
-    }*/
+    }
 
-    //tuple<int, string> BWT = MakeBWT(str, v); //BWT取得
-    //cout << "\nGet BWT" << endl;
-    //cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
+    tuple<int, string> BWT = MakeBWT(str, v); //BWT取得
+    cout << "\nGet BWT" << endl;
+    cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
 
-    //cout << "\nDecode" << endl;
-    //cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
-    //cout << ReconstructionFromBWT(BWT) << endl; //デコード */
+    cout << "\nDecode" << endl;
+    cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
+    cout << ReconstructionFromBWT(BWT) << endl; //デコード */
 
     cout << flush;
 
