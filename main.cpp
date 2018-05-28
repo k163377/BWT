@@ -102,12 +102,12 @@ int main() {
     }
 
     tuple<int, string> BWT = MakeBWT(str, v); //BWT取得
-    cout << "\nGet BWT" << endl;
-    cout << get<0>(BWT) << "\t:" << get<1>(BWT) << endl;
+    cout << "\nGet BWT" << '\n';
+    cout << get<0>(BWT) << "\t:" << get<1>(BWT) << '\n';
 
-    cout << "\nDecode" << endl;
-    cout << ReconstructionFromBWT(BWT, 5) << endl; //デコード
-    cout << ReconstructionFromBWT(BWT) << endl; //デコード */
+    cout << "\nDecode" << '\n';
+    //cout << ReconstructionFromBWT(BWT, 5) << '\n'; //デコード
+    cout << ReconstructionFromBWT(BWT) << '\n'; //デコード */
 
     cout << flush;
 
