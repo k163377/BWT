@@ -12,9 +12,8 @@ std::vector<std::tuple<int, std::string>>
 MakeSuffix(const std::string &str
 ){
     using namespace std;
-
-    vector<tuple<int, string>> v;
-    v.reserve(str.length());
+    vector<tuple<int, string >> v;
+    v.reserve(str.length()); //容量は先に確保しておく
     size_t lim = (str.length() / thread::hardware_concurrency()) + 1; //スレッド並列数計算
     //parallel_forで並列処理
     concurrency::parallel_for(size_t(0), lim, [&](size_t i){
