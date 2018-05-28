@@ -44,13 +44,16 @@ MakeBWT(const std::string OriginalString,
     using namespace std;
 
     string s(OriginalString.length(), '0'); //容量固定のstringを配列っぽく使用
+    size_t lim = (OriginalString.length() / thread::hardware_concurrency()) + 1;
     int OriginalPoint;
-    concurrency::parallel_for(size_t(0), OriginalString.length(), [&](size_t i){
-        if(get<0>(SuffixArray[i]) == 0){
-            s[i] = OriginalString[OriginalString.length()-1];
-            OriginalPoint = i;
+    concurrency::parallel_for(size_t(0), lim, [&](size_t i){
+        size_t t = min(OriginalString.length(), lim * (i + 1));
+        for(size_t j = lim * i; j < t; j++) {
+            if (get<0>(SuffixArray[j]) == 0) {
+                s[j] = OriginalString[OriginalString.length() - 1];
+                OriginalPoint = j;
+            } else s[j] = OriginalString[get<0>(SuffixArray[j]) - 1];
         }
-        else s[i] = OriginalString[get<0>(SuffixArray[i])-1];
     });
 
     return make_tuple(OriginalPoint, s);
@@ -65,7 +68,7 @@ ReconstructionFromBWT(const std::tuple<int, std::string> &BWT,
     vector<tuple<char, int>> v;
     string temp = get<1>(BWT);
     for(size_t i = 0; i < temp.length(); i++){
-        v.emplace_back(make_tuple(temp[i], i));
+        v.emplace_back(temp[i], i); //emplace_backの中に書いた要素でデフォルトコンストラクタが呼ばれてるそうな
     }
     //安定ソートで並べ替え、法則を得る
     stable_sort(execution::par_unseq, v.begin(), v.end());
@@ -88,7 +91,7 @@ int main() {
     using namespace std;
 
     //string str = "internationalization$"; //入力
-    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaagragsdhtgvhbdvsfgawdawddfthffdsrrttjhilkjpo;dftjuklidfthgsdfasarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
+    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaagragsdhtgvhbdvsfgawdawddfthffdsrrttjhilkjpo;dftjuklidfthgsdfarhdsdhrawrfafhfdfhsrawsawdawdsgsdgsarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
     vector<tuple<int, string>> v = MakeSuffix(str); //Suffix作成
     cout << "Suffix\n";
     for(auto t : v){
@@ -107,7 +110,9 @@ int main() {
 
     cout << "\nDecode" << '\n';
     //cout << ReconstructionFromBWT(BWT, 5) << '\n'; //デコード
-    cout << ReconstructionFromBWT(BWT) << '\n'; //デコード */
+    if(str == ReconstructionFromBWT(BWT) ) cout << "success!";
+    else cout << "failed";
+
 
     cout << flush;
 
