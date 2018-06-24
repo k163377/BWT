@@ -1,7 +1,7 @@
 #include <algorithm> //sort用
 #include <execution> //algorithmの並列実行ポリシー
 #include <ppl.h> //parallel_for用
-#include <concurrent_vector.h>
+#include <concurrent_vector.h> //並列
 
 #include <iostream>
 #include <string>
@@ -57,7 +57,7 @@ ReconstructionFromBWT(const std::string &BWT,
     //タグ付け
     vector<tuple<char, int>> v;
     string temp = BWT;
-    size_t val;
+    size_t val; //BTWの行末をまず入れる
     for(size_t i = 0; i < temp.length(); i++){
         v.emplace_back(temp[i], i); //emplace_backの中に書いた要素でデフォルトコンストラクタが呼ばれてるそうな
         if(temp[i] == '$') val = i;
@@ -82,8 +82,8 @@ int main() {
     using namespace std;
 
     //string str = "abca$";
-    string str = "internationalization$"; //入力
-    //string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaghfghfghsddfsdfcvncdrhgrgdrgagragsdhtgvhbdvsfgawdawddfthffdsrrtdfhsfgjghjdsetgrghzdfhjhghgjkdghjygukikfgu,fguhkf]jkhkjkhlkljkljk;lk;ktjhilkjpo;dftjuklidfthgsdfarhdsdhrawrfafhfdfhsrawsawdawdsgsdgsarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
+    //string str = "internationalization$"; //入力
+    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaghfghfghsddfsdfcvncdrhgrgdrgagragsdhtgvhbdvsfgawdawddfthffdsrrtdfhsfgjghjdsetgrghzdfhjhghgjkdghjygukikfgu,fguhkf]jkhkjkhlkljkljk;lk;ktjhilkjpo;dftjuklidfthgsdfarhdsdhrawrfafhfdfhsrawsawdawdsgsdgsarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
     concurrency::concurrent_vector<std::tuple<int, std::string>> v = MakeSuffix(str); //Suffix作成
     cout << "Suffix\n";
     for(auto t : v){
