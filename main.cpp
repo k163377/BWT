@@ -29,8 +29,7 @@ DictionaryOrderSort(concurrency::concurrent_vector<std::tuple<int, std::string>>
     using namespace std;
     sort(execution::par_unseq,
          Suffix.begin(), Suffix.end(),
-         [](tuple<int, string> &t1, tuple<int, string> &t2) {
-        return (get<1>(t1) <= get<1>(t2)); }
+         [](tuple<int, string> &t1, tuple<int, string> &t2) { return (get<1>(t1) <= get<1>(t2)); }
         );
 }
 
