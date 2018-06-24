@@ -1,22 +1,22 @@
 #include <algorithm> //sort用
 #include <execution> //algorithmの並列実行ポリシー
 #include <ppl.h> //parallel_for用
+#include <concurrent_vector.h>
 
 #include <iostream>
-#include <vector>
 #include <string>
 #include <tuple>
 
 //単語を入れたらSuffixのベクターを返す
-std::vector<std::tuple<int, std::string>>
+concurrency::concurrent_vector<std::tuple<int, std::string>>
 MakeSuffix(const std::string &str
 ){
     using namespace std;
 
-    vector<tuple<int, string>> v;
+    concurrency::concurrent_vector<std::tuple<int, std::string>> v;
     //parallel_forで並列処理
     concurrency::parallel_for(size_t(0), str.length(), [&str, &v](size_t i){
-        v.emplace_back(make_tuple(i, str.substr(i, str.length())));
+        v.push_back(make_tuple(i, str.substr(i, str.length())));
     });
 
     return v;
@@ -24,7 +24,7 @@ MakeSuffix(const std::string &str
 
 //Suffixをソート
 void
-DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &Suffix
+DictionaryOrderSort(concurrency::concurrent_vector<std::tuple<int, std::string>> &Suffix
 ){
     using namespace std;
     sort(execution::par_unseq,
@@ -37,7 +37,7 @@ DictionaryOrderSort(std::vector<std::tuple<int, std::string>> &Suffix
 //BWT系列を作成
 std::tuple<int, std::string>
 MakeBWT(const std::string OriginalString,
-        const std::vector<std::tuple<int, std::string>> &SuffixArray
+        const concurrency::concurrent_vector<std::tuple<int, std::string>> &SuffixArray
 ){
     using namespace std;
 
@@ -86,9 +86,9 @@ int main() {
     using namespace std;
 
     //string str = "abca$";
-    string str = "internationalization$"; //入力
-    //string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaagragsdhtgvhbdvsfgawdawddfthffdsrrttjhilkjpo;dftjuklidfthgsdfarhdsdhrawrfafhfdfhsrawsawdawdsgsdgsarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
-    vector<tuple<int, string>> v = MakeSuffix(str); //Suffix作成
+    //string str = "internationalization$"; //入力
+    string str = "efeasreaygdasfagfdsfsdfdfddffesfesefsfegfdgadsfgaghfghfghsddfsdfcvncdrhgrgdrgagragsdhtgvhbdvsfgawdawddfthffdsrrtdfhsfgjghjdsetgrghzdfhjhghgjkdghjygukikfgu,fguhkf]jkhkjkhlkljkljk;lk;ktjhilkjpo;dftjuklidfthgsdfarhdsdhrawrfafhfdfhsrawsawdawdsgsdgsarawarffjsrtjdztyjkdtydtyjtydtsgsgssdfbdvcfgjrjftjrxnbdgrda$";
+    concurrency::concurrent_vector<std::tuple<int, std::string>> v = MakeSuffix(str); //Suffix作成
     cout << "Suffix\n";
     for(auto t : v){
         cout << get<0>(t) << "\t:" << get<1>(t) << '\n';
